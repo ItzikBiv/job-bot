@@ -201,10 +201,14 @@ def render_pdf(html_path, pdf_path):
     pdf_path.unlink(missing_ok=True)  # never report a stale PDF from an earlier build as fresh
     if not chrome:
         return False
-    with tempfile.TemporaryDirectory() as profile_dir:
-        subprocess.run(
-            [chrome, "--headless", "--no-sandbox", "--disable-gpu", f"--user-data-dir={profile_dir}",
-             "--no-pdf-header-footer", f"--print-to-pdf={pdf_path}", Path(html_path).resolve().as_uri()],
-            check=True, capture_output=True, timeout=120,
-        )
+    # Headless print occasionally exits cleanly without writing a file; one retry covers it.
+    for _attempt in range(2):
+        with tempfile.TemporaryDirectory() as profile_dir:
+            subprocess.run(
+                [chrome, "--headless", "--no-sandbox", "--disable-gpu", f"--user-data-dir={profile_dir}",
+                 "--no-pdf-header-footer", f"--print-to-pdf={pdf_path}", Path(html_path).resolve().as_uri()],
+                check=True, capture_output=True, timeout=120,
+            )
+        if pdf_path.exists() and pdf_path.stat().st_size > 0:
+            return True
     return pdf_path.exists() and pdf_path.stat().st_size > 0
