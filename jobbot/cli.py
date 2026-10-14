@@ -1,6 +1,6 @@
 """Command line: python -m jobbot <command>.
 
-  search   --greenhouse BOARD --lever COMPANY --keyword K --location L   list matching jobs as JSON
+  search   --greenhouse BOARD --lever COMPANY --keyword K [--location L | --profile P]   list matching jobs
   check    PROFILE TAILORING.json...                                    run the truthfulness gate
   build    PROFILE TAILORING.json... --out DIR                          gate + render CV + packet
   review   PACKET_DIR... --out FILE [--leads leads.json]                build the review desk page
@@ -32,7 +32,10 @@ def cmd_search(a):
             jobs += lever.fetch(company)
         except Exception as exc:
             failures.append(f"lever:{company}: {exc}")
-    hits = [j for j in jobs if common.matches(j, a.keyword, a.location, a.exclude)][: a.limit]
+    locations = a.location
+    if not locations and a.profile:
+        locations = load_profile(a.profile).get("preferences", {}).get("regions", [])
+    hits = [j for j in jobs if common.matches(j, a.keyword, locations, a.exclude)][: a.limit]
     print(json.dumps(hits, ensure_ascii=False, indent=2))
     for f in failures:
         print(f"warning: {f}", file=sys.stderr)
@@ -86,6 +89,7 @@ def main(argv=None):
     s.add_argument("--lever", action="append", default=[])
     s.add_argument("--keyword", action="append", default=[])
     s.add_argument("--location", action="append", default=[])
+    s.add_argument("--profile", help="read preferred regions from this profile when no --location is given")
     s.add_argument("--exclude", action="append", default=["senior", "director", "manager"])
     s.add_argument("--limit", type=int, default=50)
     s.set_defaults(fn=cmd_search)

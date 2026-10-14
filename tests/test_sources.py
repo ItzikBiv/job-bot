@@ -28,5 +28,29 @@ class Sources(unittest.TestCase):
         self.assertTrue(common.matches(jobs[0], ["rf"], ["ashdod"]))
 
 
+class SearchRegions(unittest.TestCase):
+    def test_search_uses_profile_regions_when_no_location_given(self):
+        import contextlib
+        import io
+        import json as _json
+        from unittest import mock
+
+        from jobbot import cli
+        data = _json.loads((FIX / "lever.json").read_text())
+        prof = _json.loads((FIX / "profile.json").read_text())
+        out = io.StringIO()
+        with mock.patch.object(lever, "fetch", return_value=lever.parse("acme", data)), \
+             mock.patch.object(cli, "load_profile", return_value={**prof, "preferences": {"regions": ["Haifa"]}}), \
+             contextlib.redirect_stdout(out):
+            cli.main(["search", "--lever", "acme", "--profile", "p.json"])
+        self.assertEqual(_json.loads(out.getvalue()), [])
+        out = io.StringIO()
+        with mock.patch.object(lever, "fetch", return_value=lever.parse("acme", data)), \
+             mock.patch.object(cli, "load_profile", return_value={**prof, "preferences": {"regions": ["Ashdod"]}}), \
+             contextlib.redirect_stdout(out):
+            cli.main(["search", "--lever", "acme", "--profile", "p.json"])
+        self.assertEqual(len(_json.loads(out.getvalue())), 1)
+
+
 if __name__ == "__main__":
     unittest.main()
