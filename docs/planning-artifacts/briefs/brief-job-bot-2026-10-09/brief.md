@@ -13,7 +13,7 @@ Applying for engineering jobs well is slow. Each good application needs a CV re-
 
 ## Who it is for
 
-One person: the owner. He is a 3rd-year B.Sc. Electrical Engineering student (RF, communications and satellites) and a certified practical engineer, based in Ashdod. He has about six years of IAF aircraft electrical-systems experience and recent work building AI automations. He is looking for a student position or a junior role that fits around his studies. `[ASSUMPTION]` Other users are not a goal for now.
+One person: the owner, an engineering student looking for a student position or a junior role that fits around his studies. His details live only in the git-ignored master profile (D6). `[ASSUMPTION]` Other users are not a goal for now.
 
 ## What it does
 
@@ -40,7 +40,7 @@ One person: the owner. He is a 3rd-year B.Sc. Electrical Engineering student (RF
 - **Source coverage.** Many Israeli defence and aviation employers (IAI, Elbit, Rafael) use their own career sites, not Greenhouse or Lever. Search may lean on web search plus manual links.
 - **Network.** The current cloud environment blocks the ATS APIs. Fetchers need the domains allowed, or need to run on his machine.
 - **Prompt injection.** Job text is untrusted input to the tailoring step. Mitigation: tailoring may only select and reword items from the master profile, enforced by a validator, not just a prompt.
-- **CV claims to confirm.** The Hebrew and English CVs differ (for example "200+ aircraft / 15+ platforms", EMC/EMI, VNA). These stay flagged until he confirms them.
+- **CV claims to confirm.** His existing CVs differ from each other. Claims that appear in only one are marked `confirm` in the private profile and are left off tailored CVs until he confirms them.
 
 ## What's next
 

@@ -1,0 +1,91 @@
+import json
+import tempfile
+import unittest
+from pathlib import Path
+
+from jobbot import packet, render, review
+from tests.helpers import profile, tailoring
+
+
+class RenderAndPacket(unittest.TestCase):
+    def test_html_is_escaped(self):
+        t = tailoring()
+        t["experience"][0]["bullets"][1] = {"text": "Maintained <script>alert(1)</script> test setups.", "from": ["b-new-2"]}
+        html = render.render_html(profile(), t)
+        self.assertNotIn("<script>alert", html)
+        self.assertIn("&lt;script&gt;", html)
+
+    def test_hebrew_is_rtl_and_english_ltr(self):
+        self.assertIn('dir="rtl"', render.render_html(profile(), tailoring(lang="he", summary={})))
+        self.assertIn('dir="ltr"', render.render_html(profile(), tailoring()))
+
+    def test_hebrew_isolates_latin_runs_and_main_comes_first(self):
+        t = tailoring(lang="he", summary={})
+        t["experience"][0]["bullets"][1] = {"text": "תחזוקת עמדות בדיקה <b> RF", "from": ["b-new-2"]}
+        html = render.render_html(profile(), t)
+        self.assertIn('<span dir="ltr">RF</span>', html)
+        self.assertNotIn("<b>", html.split("<body>")[1].split("<aside")[0])
+        self.assertIn("&lt;", html)
+        self.assertIn('<span dir="ltr">dana@example.com</span>', html)
+        self.assertLess(html.index('<main class="main">'), html.index('<aside class="side">'))
+
+    def test_review_page_drops_unsafe_links_and_sandboxes_preview(self):
+        with tempfile.TemporaryDirectory() as d:
+            t = tailoring(slug="../../escape")
+            t["job"]["apply_url"] = "javascript:alert(1)"
+            t["job"]["url"] = "data:text/html,hi"
+            t["fit"] = {"score": None}
+            folder, _ = packet.build(profile(), t, d, make_pdf=False)
+            self.assertEqual(folder.parent, Path(d))
+            page = review.build_page([folder], leads=[{"name": "x", "url": "javascript:alert(2)", "note": "n"}])
+            self.assertNotIn("javascript:", page)
+            self.assertNotIn('href="data:', page)
+            self.assertIn('sandbox=""', page)
+
+    def test_stale_pdf_is_removed_when_no_browser(self):
+        import os
+        with tempfile.TemporaryDirectory() as d:
+            html = Path(d) / "cv.html"
+            html.write_text("<p>x</p>")
+            pdf = Path(d) / "cv.pdf"
+            pdf.write_bytes(b"old")
+            old = os.environ.get("PATH")
+            os.environ["PATH"] = ""
+            os.environ["JOBBOT_CHROMIUM"] = "/nonexistent"
+            orig = render.find_chromium
+            render.find_chromium = lambda: None
+            try:
+                self.assertFalse(render.render_pdf(html, pdf))
+            finally:
+                render.find_chromium = orig
+                os.environ["PATH"] = old or ""
+                os.environ.pop("JOBBOT_CHROMIUM")
+            self.assertFalse(pdf.exists())
+
+    def test_dates_and_present(self):
+        html = render.render_html(profile(), tailoring())
+        self.assertIn("01.2023 – Present", html)
+        self.assertIn("01.2020 – 12.2022", html)
+
+    def test_rejected_tailoring_builds_nothing(self):
+        t = tailoring(summary={"text": "Has 99 patents.", "from": ["f-years"]})
+        with tempfile.TemporaryDirectory() as d:
+            with self.assertRaises(packet.TailoringRejected):
+                packet.build(profile(), t, d, make_pdf=False)
+            self.assertEqual(list(Path(d).iterdir()), [])
+
+    def test_packet_and_review_page(self):
+        with tempfile.TemporaryDirectory() as d:
+            folder, p = packet.build(profile(), tailoring(), d, make_pdf=False)
+            saved = json.loads((folder / "packet.json").read_text(encoding="utf-8"))
+            self.assertEqual(saved["fields"]["email"], "dana@example.com")
+            self.assertTrue(any("Reworded" in c for c in saved["changes"]))
+            page = review.build_page([folder], leads=[{"name": "Lead", "url": "https://example.com", "note": "check"}])
+            self.assertTrue(page.startswith("<title>"))
+            self.assertIn("srcdoc=", page)
+            self.assertNotIn("<html", page.split("srcdoc=")[0])
+            self.assertIn("Lead", page)
+
+
+if __name__ == "__main__":
+    unittest.main()
