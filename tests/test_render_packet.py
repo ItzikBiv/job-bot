@@ -62,6 +62,13 @@ class RenderAndPacket(unittest.TestCase):
                 os.environ.pop("JOBBOT_CHROMIUM")
             self.assertFalse(pdf.exists())
 
+    def test_undated_education_has_no_date(self):
+        prof = profile()
+        prof["education"].append({"id": "e-lic", "title": {"en": "Licence", "he": "רישיון"}, "org": {"en": "Gov", "he": "ממשלה"},
+                                  "start": None, "end": None, "note": None})
+        html = render.render_html(prof, tailoring(education=["e-1", "e-lic"]))
+        self.assertIn('<span class="title">Licence</span><span class="date"></span>', html)
+
     def test_dates_and_present(self):
         html = render.render_html(profile(), tailoring())
         self.assertIn("01.2023 – Present", html)

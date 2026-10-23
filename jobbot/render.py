@@ -104,6 +104,8 @@ def _fmt_date(ym, lang):
 
 
 def _range(item, lang):
+    if not item.get("start") and not item.get("end"):
+        return ""  # undated items such as licences
     return f"{_fmt_date(item.get('start'), lang)} – {_fmt_date(item.get('end'), lang)}"
 
 
