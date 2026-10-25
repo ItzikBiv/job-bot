@@ -128,6 +128,10 @@ class TruthGate(unittest.TestCase):
         errors, _ = self.check(t)
         self.assertTrue(any("job:" in e for e in errors), errors)
 
+    def test_summary_may_cite_languages(self):
+        t = tailoring(summary={"text": "EE student with advanced English.", "from": ["l-en"]})
+        self.assertEqual(self.check(t)[0], [])
+
     def test_hebrew_bullet_keeps_source_number(self):
         t = tailoring(lang="he", summary={"text": "סטודנטית עם 4 שנות עבודת מעבדה.", "from": ["f-years"]})
         errors, _ = self.check(t)

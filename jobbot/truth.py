@@ -158,7 +158,7 @@ def validate(profile, t):
             errors.append("summary: free text must cite source ids in 'from'")
         sources = []
         for r in refs:
-            e = need(r, ("facts", "bullet", "skills", "education", "experience"), "summary.from")
+            e = need(r, ("facts", "bullet", "skills", "education", "experience", "languages"), "summary.from")
             if e:
                 sources += all_text(e[1])
         _check_free_text("summary", summary["text"], sources, errors, warnings, confirm_texts, profile_tokens)
