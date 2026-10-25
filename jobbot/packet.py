@@ -62,6 +62,14 @@ def unconfirmed_items(profile, t):
     return names
 
 
+def download_name(profile, t, slug):
+    """A file name a recruiter can recognise: Firstname_Lastname_CV_<job label>.pdf (ASCII only)."""
+    who = re.sub(r"[^A-Za-z0-9]+", "_", profile["person"]["name"]["en"]).strip("_")
+    label = t.get("file_label") or "_".join(w.capitalize() for w in slug.split("-"))
+    label = re.sub(r"[^A-Za-z0-9]+", "_", label).strip("_")
+    return f"{who}_CV_{label}.pdf"
+
+
 def build(profile, t, out_root, make_pdf=True):
     errors, warnings = truth.validate(profile, t)
     if errors:
@@ -73,6 +81,9 @@ def build(profile, t, out_root, make_pdf=True):
     html_path = folder / "cv.html"
     html_path.write_text(render.render_html(profile, t), encoding="utf-8")
     pdf_ok = render.render_pdf(html_path, folder / "cv.pdf") if make_pdf else False
+    nice_name = download_name(profile, t, slug)
+    if pdf_ok:
+        (folder / nice_name).write_bytes((folder / "cv.pdf").read_bytes())
 
     person = profile["person"]
     lang = t["lang"]
@@ -95,7 +106,8 @@ def build(profile, t, out_root, make_pdf=True):
         "email": (t.get("packet") or {}).get("email"),
         "changes": change_log(profile, t) + list(t.get("notes", [])),
         "warnings": unconfirmed_items(profile, t) + [w for w in warnings if "not yet confirmed" not in w],
-        "files": {"cv_html": "cv.html", "cv_pdf": "cv.pdf" if pdf_ok else None},
+        "files": {"cv_html": "cv.html", "cv_pdf": "cv.pdf" if pdf_ok else None,
+                  "cv_named": nice_name if pdf_ok else None},
     }
     (folder / "packet.json").write_text(json.dumps(packet, ensure_ascii=False, indent=2), encoding="utf-8")
     return folder, packet

@@ -172,7 +172,8 @@ def render_packet(p, cv_html):
                      f'<div class="q">Body (attach the PDF)</div>{_copy_block(f"{slug}-body", em.get("body"), rtl)}</div>')
     changes = "".join(f"<li>{_e(c)}</li>" for c in p.get("changes", []))
     warns = "".join(f"<li>{_e(w)}</li>" for w in p.get("warnings", []))
-    pdf = f'<a class="btn" href="cvs/{_e(slug)}.pdf" target="_blank" rel="noopener">Open CV PDF</a>' if p["files"].get("cv_pdf") else ""
+    pdf_name = p["files"].get("cv_named") or f"{slug}.pdf"
+    pdf = f'<a class="btn" href="cvs/{_e(pdf_name)}" target="_blank" rel="noopener">Open CV PDF</a>' if p["files"].get("cv_pdf") else ""
     apply_label = "Open posting & apply" if status != "lead" else "Open careers site"
     link = safe_url(job.get("apply_url")) or safe_url(job.get("url"))
     gaps = fit.get("gaps") or []

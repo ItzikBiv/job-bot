@@ -81,6 +81,10 @@ class RenderAndPacket(unittest.TestCase):
         self.assertIn('<span dir="ltr">Scope, VNA</span>)', html)
         self.assertIn('<span dir="ltr">C-130H, C-130J</span> ו-<span dir="ltr">Boeing 707</span>.', html)
 
+    def test_download_name_is_person_and_job(self):
+        self.assertEqual(packet.download_name(profile(), {"file_label": "KLA Yavne"}, "x"), "Dana_Example_CV_KLA_Yavne.pdf")
+        self.assertEqual(packet.download_name(profile(), {}, "acme-rf-student"), "Dana_Example_CV_Acme_Rf_Student.pdf")
+
     def test_dates_and_present(self):
         html = render.render_html(profile(), tailoring())
         self.assertIn("01.2023 – Present", html)
