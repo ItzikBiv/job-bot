@@ -18,4 +18,5 @@ This repo is built with the **workflow** operating model and the BMad Method ski
 - Nothing is submitted to an employer without the user's explicit approval (D1).
 - No automation against sites whose terms forbid it (D2).
 - CV tailoring never invents facts (D3).
+- Every CV is upgraded by the `cv-upgrader` subagent and re-verified before it is sent to the user (D9).
 - No secrets or `.env` in the repo; `.env.example` only.

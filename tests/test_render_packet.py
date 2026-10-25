@@ -69,6 +69,13 @@ class RenderAndPacket(unittest.TestCase):
         html = render.render_html(prof, tailoring(education=["e-1", "e-lic"]))
         self.assertIn('<span class="title">Licence</span><span class="date"></span>', html)
 
+    def test_hebrew_sentence_punctuation_stays_outside_latin_run(self):
+        t = tailoring(lang="he", summary={"text": "מתכנת ב-Python ו-MATLAB. עובד עם B.Sc, VNA.", "from": ["s-matlab"]})
+        html = render.render_html(profile(), t)
+        self.assertIn('<span dir="ltr">MATLAB</span>. ', html)
+        self.assertIn('<span dir="ltr">B.Sc</span>,', html)
+        self.assertIn('<span dir="ltr">VNA</span>.', html)
+
     def test_dates_and_present(self):
         html = render.render_html(profile(), tailoring())
         self.assertIn("01.2023 – Present", html)

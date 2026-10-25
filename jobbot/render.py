@@ -88,9 +88,12 @@ def bidi(text, lang):
     for m in LATIN_RUN.finditer(text):
         if not re.search(r"[A-Za-z]", m.group()):
             continue
+        # Sentence punctuation after the run belongs to the Hebrew sentence, not the English
+        # word; inside the LTR span it would show on the wrong side ("MATLAB." -> ".MATLAB").
+        run = m.group().rstrip(".,;:!?'")
         out.append(escape(text[pos:m.start()], quote=True))
-        out.append(f'<span dir="ltr">{escape(m.group(), quote=True)}</span>')
-        pos = m.end()
+        out.append(f'<span dir="ltr">{escape(run, quote=True)}</span>')
+        pos = m.start() + len(run)
     out.append(escape(text[pos:], quote=True))
     return "".join(out)
 
