@@ -76,7 +76,9 @@ h3.sec{font-size:13px;color:var(--ink);font-weight:800;margin:20px 0 4px;padding
 """
 
 
-LATIN_RUN = re.compile(r"[A-Za-z0-9][A-Za-z0-9+#./&'@_-]*(?:\s+[A-Za-z0-9+#./&'@_-]+)*")
+# A run of English words, including lists like "Scope, VNA" or "C-130H, C-130J": one LTR span
+# keeps the list in reading order; separate spans would be reversed by the RTL paragraph.
+LATIN_RUN = re.compile(r"[A-Za-z0-9][A-Za-z0-9+#./&'@_-]*(?:,?\s+[A-Za-z0-9+#./&'@_-]+)*")
 
 
 def bidi(text, lang):

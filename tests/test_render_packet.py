@@ -73,8 +73,13 @@ class RenderAndPacket(unittest.TestCase):
         t = tailoring(lang="he", summary={"text": "מתכנת ב-Python ו-MATLAB. עובד עם B.Sc, VNA.", "from": ["s-matlab"]})
         html = render.render_html(profile(), t)
         self.assertIn('<span dir="ltr">MATLAB</span>. ', html)
-        self.assertIn('<span dir="ltr">B.Sc</span>,', html)
-        self.assertIn('<span dir="ltr">VNA</span>.', html)
+        self.assertIn('<span dir="ltr">B.Sc, VNA</span>.', html)
+
+    def test_hebrew_keeps_english_lists_in_one_run(self):
+        t = tailoring(lang="he", summary={"text": "מכשור מעבדה (Scope, VNA), מטוסי C-130H, C-130J ו-Boeing 707.", "from": ["s-rf"]})
+        html = render.render_html(profile(), t)
+        self.assertIn('<span dir="ltr">Scope, VNA</span>)', html)
+        self.assertIn('<span dir="ltr">C-130H, C-130J</span> ו-<span dir="ltr">Boeing 707</span>.', html)
 
     def test_dates_and_present(self):
         html = render.render_html(profile(), tailoring())
