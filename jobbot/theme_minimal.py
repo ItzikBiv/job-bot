@@ -96,9 +96,9 @@ h2{font-weight:400;font-size:12px;letter-spacing:.2em;text-transform:uppercase;c
 .stat{padding:9px 6px;text-align:center}
 [dir=ltr] .stat+.stat{border-left:1px solid var(--line)}[dir=rtl] .stat+.stat{border-right:1px solid var(--line)}
 .stat .n{font-family:'Libre Bodoni',Georgia,serif;font-size:19px;color:var(--ink);line-height:1;direction:ltr;unicode-bidi:isolate}
-.stat .l{font-size:7.6px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft);margin-top:5px;line-height:1.35}
+.stat .l{font-size:8.2px;letter-spacing:.12em;text-transform:uppercase;color:var(--text);margin-top:5px;line-height:1.35}
 [lang=he] .stat .l{letter-spacing:.02em;font-size:8.6px}
-.job{margin-bottom:8px;break-inside:avoid}
+.job{margin-bottom:8px;break-inside:avoid}.job.nob{margin-bottom:5px}.job.nob .m{margin-bottom:0}
 .job .t{font-weight:700;font-size:9.4px;letter-spacing:.03em;text-transform:uppercase;color:var(--ink)}
 [lang=he] .job .t{font-size:10.5px;text-transform:none;letter-spacing:0}
 .job .m{font-size:9.3px;color:var(--text);margin:3px 0 3px}
@@ -107,13 +107,13 @@ h2{font-weight:400;font-size:12px;letter-spacing:.2em;text-transform:uppercase;c
 .job ul{list-style:none}
 .job li{position:relative;font-size:9.3px;line-height:1.5;color:var(--soft);margin-top:2px}
 [dir=ltr] .job li{padding-left:11px}[dir=rtl] .job li{padding-right:11px}
-.job li::before{content:"\\2022";position:absolute;top:0;color:#b9bdc2;font-size:9px}
+.job li::before{content:"\\2022";position:absolute;top:0;color:#8a9097;font-size:9px}
 [dir=ltr] .job li::before{left:0}[dir=rtl] .job li::before{right:0}
 .single .contact-line{font-size:9.6px;color:var(--text);margin-top:12px;display:flex;flex-wrap:wrap;gap:4px 16px}
 .single .contact-line span{direction:ltr;unicode-bidi:isolate}
 .single .body{padding-top:14px}
 /* PDF-parsing portals read letter-spaced capitals as separate letters: keep tracking tight in single layout */
-.single .head .title,.single h2,.single .stat .l{letter-spacing:.02em}.single .sep{margin:16px 0}
+.single .head .title,.single h2,.single .stat .l{letter-spacing:.02em}.single .sep{margin:16px 0}.single .job li{font-size:9.6px}.single .job{margin-bottom:10px}.single .job.nob{margin-bottom:5px}
 .single .skills-plain div{font-size:9.6px;line-height:1.7;color:var(--text)}
 .single .skills-plain b{color:var(--ink);font-weight:700}
 @media print{.page{margin:0}@page{size:A4;margin:0}}
@@ -180,7 +180,8 @@ def render(profile, t, bidi, emphasize, skill_groups):
             meta += f" &nbsp;|&nbsp; <span class=\"d\">{e(dates)}</span>"
         lis = "".join(f"<li>{e(b)}</li>" for b in bullets)
         note = f"<li>{e(sub)}</li>" if sub else ""
-        return (f"<div class=\"job\"><div class=\"t\">{e(src['title'][lang])}</div>"
+        cls = "job" if (bullets or sub) else "job nob"
+        return (f"<div class=\"{cls}\"><div class=\"t\">{e(src['title'][lang])}</div>"
                 f"<div class=\"m\">{meta}</div><ul>{lis}{note}</ul></div>")
 
     jobs = []
