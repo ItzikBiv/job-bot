@@ -31,7 +31,7 @@ def check_profile(p):
 
 
 def iter_ids(p):
-    for key in ("headlines", "facts", "skills", "experience", "education", "languages"):
+    for key in ("headlines", "facts", "stats", "skills", "experience", "education", "languages"):
         for item in p.get(key, []):
             yield item["id"]
             for b in item.get("bullets", []):
@@ -41,7 +41,7 @@ def iter_ids(p):
 def index(p):
     """Map every id to (kind, item, parent_experience_id_or_None)."""
     idx = {}
-    for key in ("headlines", "facts", "skills", "education", "languages"):
+    for key in ("headlines", "facts", "stats", "skills", "education", "languages"):
         for item in p.get(key, []):
             idx[item["id"]] = (key, item, None)
     for x in p.get("experience", []):

@@ -12,6 +12,7 @@ source items do not contain.
 
 import re
 
+from . import design
 from .profile import LANGS, all_text, index
 
 TAILORING_SCHEMA = "jobbot.tailoring/v1"
@@ -206,6 +207,12 @@ def validate(profile, t):
                 _check_free_text(where, b["text"], sources, errors, warnings, confirm_texts, profile_tokens)
             else:
                 errors.append(f"{where}: needs 'ref' or 'text'")
+
+    errors += design.problems(t, {i for i, (kind, _, _) in idx.items() if kind == "stats"})
+    for sid in design.options(t)["stats"]:
+        entry = idx.get(sid)
+        if entry and entry[1].get("confirm"):
+            warnings.append(f"design.stats: '{sid}' is not yet confirmed by the user")
 
     # Packet text cites the whole profile; it may name the job (as whole phrases) and repeat the
     # user's own contact details.

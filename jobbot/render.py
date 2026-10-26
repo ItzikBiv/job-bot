@@ -13,6 +13,7 @@ import tempfile
 from html import escape
 from pathlib import Path
 
+from . import design
 from .profile import index
 
 SKILL_GROUPS = {
@@ -114,6 +115,22 @@ h3.sec{margin-top:16px}
 """
 
 
+def emphasize(text, phrases, lang):
+    """Escape text with bidi() and wrap exact phrases in <b> (phrases are validated substrings)."""
+    if not phrases:
+        return bidi(text, lang)
+    out, pos = [], 0
+    spans = sorted((text.find(p), p) for p in phrases if p and text.find(p) >= 0)
+    for start, ph in spans:
+        if start < pos:
+            continue
+        out.append(bidi(text[pos:start], lang))
+        out.append(f"<b>{bidi(ph, lang)}</b>")
+        pos = start + len(ph)
+    out.append(bidi(text[pos:], lang))
+    return "".join(out)
+
+
 def _fmt_date(ym, lang):
     """'2023-01' -> '01.2023'; a bare year stays as is; empty means present."""
     if not ym:
@@ -142,17 +159,25 @@ def render_html(profile, t):
     for sid in t.get("skills", []):
         s = idx[sid][1]
         groups.setdefault(s.get("group") if s.get("group") in SKILL_GROUPS else "engineering", []).append(s[lang])
+    as_list = (t.get("design") or {}).get("skills_style") == "list"
     side_skills = "".join(
-        f"<h2>{e(SKILL_GROUPS[g][lang])}</h2><div class=\"chips\">"
-        + "".join(f"<span class=\"chip\">{e(x)}</span>" for x in items)
-        + "</div>"
+        f"<h2>{e(SKILL_GROUPS[g][lang])}</h2>"
+        + (f"<div class=\"skills-list\">{e(' · '.join(items))}</div>" if as_list else
+           "<div class=\"chips\">" + "".join(f"<span class=\"chip\">{e(x)}</span>" for x in items) + "</div>")
         for g, items in sorted(groups.items(), key=lambda kv: list(SKILL_GROUPS).index(kv[0]))
     )
     langs = "".join(
         f"<div class=\"row\"><span>{e(l[lang])}</span><b>{e(l['level'][lang])}</b></div>"
         for l in profile.get("languages", [])
     )
-    facts = "".join(f"<span class=\"fact\">{e(idx[f][1][lang])}</span>" for f in t.get("facts", []))
+    opts = design.options(t)
+    facts = "".join(f"<span class=\"fact\">{e(idx[f][1][lang])}</span>" for f in t.get("facts", [])) if opts["fact_pills"] else ""
+    stats = "".join(
+        f"<div class=\"stat\"><div class=\"n\">{escape(idx[s][1]['value'], quote=True)}</div><div class=\"l\">{e(idx[s][1][lang])}</div></div>"
+        for s in opts["stats"] if s in idx
+    )
+    stats_html = f'<div class="stats">{stats}</div>' if stats else ""
+    summary_html = emphasize(summary, opts["emphasis"], lang)
 
     jobs = []
     for x in t.get("experience", []):
@@ -199,13 +224,13 @@ def render_html(profile, t):
         return f"""<!DOCTYPE html>
 <html lang="{lang}" dir="{direction}">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{e(person['name'][lang])} — CV</title><style>{CSS}{SINGLE_CSS}</style></head>
+<title>{e(person['name'][lang])} — CV</title><style>{CSS}{SINGLE_CSS}{design.css(t)}</style></head>
 <body><div class="page"><main class="main">
 <div class="name">{e(person['name'][lang])}</div>
 <div class="role">{e(headline)}</div>
 <div class="contact-line">{contact_line}</div><div class="rule"></div>
-<p class="summary">{e(summary)}</p>
-{f'<div class="facts">{facts}</div>' if facts else ''}
+<p class="summary">{summary_html}</p>
+{stats_html}{f'<div class="facts">{facts}</div>' if facts else ''}
 <h3 class="sec">{e(LABELS['experience'][lang])}</h3>{''.join(jobs)}
 <h3 class="sec">{e(LABELS['education'][lang])}</h3>{''.join(edu)}
 <h3 class="sec">{e(SKILLS_LABEL[lang])}</h3><div class="skills-plain">{skills_plain}</div>
@@ -216,12 +241,12 @@ def render_html(profile, t):
     return f"""<!DOCTYPE html>
 <html lang="{lang}" dir="{direction}">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{e(person['name'][lang])} — CV</title><style>{CSS}</style></head>
+<title>{e(person['name'][lang])} — CV</title><style>{CSS}{design.css(t)}</style></head>
 <body><div class="page">
 <main class="main"><div class="name">{e(person['name'][lang])}</div>
 <div class="role">{e(headline)}</div><div class="rule"></div>
-<p class="summary">{e(summary)}</p>
-{f'<div class="facts">{facts}</div>' if facts else ''}
+<p class="summary">{summary_html}</p>
+{stats_html}{f'<div class="facts">{facts}</div>' if facts else ''}
 <h3 class="sec">{e(LABELS['experience'][lang])}</h3>{''.join(jobs)}
 <h3 class="sec">{e(LABELS['education'][lang])}</h3>{''.join(edu)}
 </main>

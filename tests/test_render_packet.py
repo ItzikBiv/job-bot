@@ -92,6 +92,24 @@ class RenderAndPacket(unittest.TestCase):
         self.assertIn("<b>Software:</b> MATLAB", html)
         self.assertLess(html.index("contact-line"), html.index('class="summary"'))
 
+    def test_design_stats_tiles_and_emphasis(self):
+        t = tailoring(design={"stats": ["st-years", "st-lines"], "emphasis": ["4 years of lab work"], "palette": "teal"})
+        html = render.render_html(profile(), t)
+        self.assertIn('<div class="n">12</div>', html)
+        self.assertIn("<b>4 years of lab work</b>", html)
+        self.assertIn("--accent:#0f8b8d", html)
+        self.assertIn("repeat(2,1fr)", html)
+
+    def test_design_defaults_keep_original_look(self):
+        html = render.render_html(profile(), tailoring())
+        self.assertNotIn('<div class="stats">', html)
+        self.assertIn("--accent:#2f6bff", html)
+
+    def test_skills_as_list(self):
+        html = render.render_html(profile(), tailoring(design={"skills_style": "list"}))
+        self.assertIn('class="skills-list"', html)
+        self.assertNotIn('<span class="chip">', html)
+
     def test_dates_and_present(self):
         html = render.render_html(profile(), tailoring())
         self.assertIn("01.2023 – Present", html)

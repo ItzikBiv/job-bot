@@ -132,6 +132,15 @@ class TruthGate(unittest.TestCase):
         t = tailoring(summary={"text": "EE student with advanced English.", "from": ["l-en"]})
         self.assertEqual(self.check(t)[0], [])
 
+    def test_design_block_is_validated(self):
+        ok = tailoring(design={"stats": ["st-years"], "emphasis": ["4 years of lab work"], "density": "compact"})
+        self.assertEqual(self.check(ok)[0], [])
+        bad = tailoring(design={"stats": ["st-made-up"], "emphasis": ["not in summary"], "palette": "red;}body{display:none",
+                                "density": "huge", "font": "Comic"})
+        errors = self.check(bad)[0]
+        for needle in ("unknown stat id", "not an exact phrase", "design.palette", "design.density", "unknown option 'font'"):
+            self.assertTrue(any(needle in e for e in errors), (needle, errors))
+
     def test_hebrew_bullet_keeps_source_number(self):
         t = tailoring(lang="he", summary={"text": "סטודנטית עם 4 שנות עבודת מעבדה.", "from": ["f-years"]})
         errors, _ = self.check(t)
