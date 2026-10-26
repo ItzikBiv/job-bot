@@ -63,7 +63,7 @@ body{font-family:'Roboto','Heebo',Arial,sans-serif}
 [lang=he] body,[lang=he] .page{font-family:'Heebo','Roboto',Arial,sans-serif}
 .ltr{direction:ltr;unicode-bidi:isolate}
 .page{width:210mm;min-height:296mm;margin:0 auto;padding:13mm 15mm 9mm;background:#fff}
-.head .title{font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink)}
+.head .title{font-size:10.2px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink)}
 .head .name{font-family:'Libre Bodoni',Georgia,serif;font-weight:500;font-size:42px;line-height:1.02;
   text-transform:uppercase;letter-spacing:.02em;color:var(--ink);margin-top:8px}
 [lang=he] .head .title{letter-spacing:.06em;font-size:13px;text-transform:none}
@@ -111,7 +111,7 @@ h2{font-weight:400;font-size:12px;letter-spacing:.2em;text-transform:uppercase;c
 [dir=ltr] .job li::before{left:0}[dir=rtl] .job li::before{right:0}
 .single .contact-line{font-size:9.6px;color:var(--text);margin-top:12px;display:flex;flex-wrap:wrap;gap:4px 16px}
 .single .contact-line span{direction:ltr;unicode-bidi:isolate}
-.single .body{padding-top:18px}
+.single .body{padding-top:12px}
 .single .skills-plain div{font-size:9.6px;line-height:1.7;color:var(--text)}
 .single .skills-plain b{color:var(--ink);font-weight:700}
 @media print{.page{margin:0}@page{size:A4;margin:0}}
@@ -208,8 +208,8 @@ def render(profile, t, bidi, emphasize, skill_groups):
                 f"<h2>{T('summary')}</h2><p class=\"summary\">{summary_html}</p>{stats_html}<div class=\"sep\"></div>"
                 f"<h2>{T('experience')}</h2>{''.join(jobs)}<div class=\"sep\"></div>"
                 f"<h2>{T('education')}</h2>{''.join(edu)}<div class=\"sep\"></div>"
-                f"<h2>{T('skills')}</h2><div class=\"skills-plain\">{skills_plain}</div><div class=\"sep\"></div>"
-                f"<h2>{T('languages')}</h2><div class=\"skills-plain\"><div>{e(', '.join(langs))}</div></div></div>")
+                f"<h2>{T('skills')}</h2><div class=\"skills-plain\">{skills_plain}"
+                f"<div><b>{T('languages')}:</b> {e(', '.join(langs))}</div></div></div>")
         page = f"<div class=\"page single\">{head}{body}</div>"
     else:
         contact_rows = "".join(
