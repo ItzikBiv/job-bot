@@ -85,6 +85,13 @@ class RenderAndPacket(unittest.TestCase):
         self.assertEqual(packet.download_name(profile(), {"file_label": "KLA Yavne"}, "x"), "Dana_Example_CV_KLA_Yavne.pdf")
         self.assertEqual(packet.download_name(profile(), {}, "acme-rf-student"), "Dana_Example_CV_Acme_Rf_Student.pdf")
 
+    def test_single_column_layout_has_no_sidebar(self):
+        html = render.render_html(profile(), tailoring(layout="single"))
+        self.assertNotIn('<aside class="side">', html)
+        self.assertIn('class="contact-line"', html)
+        self.assertIn("<b>Software:</b> MATLAB", html)
+        self.assertLess(html.index("contact-line"), html.index('class="summary"'))
+
     def test_dates_and_present(self):
         html = render.render_html(profile(), tailoring())
         self.assertIn("01.2023 – Present", html)

@@ -21,6 +21,7 @@ SKILL_GROUPS = {
     "ai": {"en": "AI & Automation", "he": "AI ואוטומציה"},
     "strengths": {"en": "Strengths", "he": "חוזקות"},
 }
+SKILLS_LABEL = {"en": "Skills", "he": "כישורים"}
 LABELS = {
     "contact": {"en": "Contact", "he": "פרטי קשר"},
     "languages": {"en": "Languages", "he": "שפות"},
@@ -100,6 +101,19 @@ def bidi(text, lang):
     return "".join(out)
 
 
+# Single-column variant for portals that parse the PDF into fields (Workday, Taleo): no sidebar,
+# contact line under the name, skills as plain lines, standard section order.
+SINGLE_CSS = """
+.page{display:block;min-height:auto}.main{padding:28px 34px 10px}
+.contact-line{font-size:11px;color:var(--ink-soft);margin-top:8px}
+.contact-line span{white-space:nowrap}
+h3.sec{margin-top:16px}
+.skills-plain{font-size:11.5px;line-height:1.6;color:var(--ink-soft);margin-top:6px}
+.skills-plain b{color:var(--ink)}
+@media print{.page{min-height:auto}}
+"""
+
+
 def _fmt_date(ym, lang):
     """'2023-01' -> '01.2023'; a bare year stays as is; empty means present."""
     if not ym:
@@ -173,6 +187,31 @@ def render_html(profile, t):
         f"<div class=\"row\"><span class=\"k\">{k}</span><span class=\"{'v' if ltr else ''}\">{e(v)}</span></div>"
         for k, v, ltr in contact
     )
+
+    if t.get("layout") == "single":
+        sep = " · "
+        contact_line = sep.join(f"<span>{e(v)}</span>" for _, v, _ in contact)
+        skills_plain = "".join(
+            f"<div><b>{e(SKILL_GROUPS[g][lang])}:</b> {e(', '.join(items))}</div>"
+            for g, items in sorted(groups.items(), key=lambda kv: list(SKILL_GROUPS).index(kv[0]))
+        )
+        lang_plain = ", ".join(f"{l[lang]} ({l['level'][lang]})" for l in profile.get("languages", []))
+        return f"""<!DOCTYPE html>
+<html lang="{lang}" dir="{direction}">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{e(person['name'][lang])} — CV</title><style>{CSS}{SINGLE_CSS}</style></head>
+<body><div class="page"><main class="main">
+<div class="name">{e(person['name'][lang])}</div>
+<div class="role">{e(headline)}</div>
+<div class="contact-line">{contact_line}</div><div class="rule"></div>
+<p class="summary">{e(summary)}</p>
+{f'<div class="facts">{facts}</div>' if facts else ''}
+<h3 class="sec">{e(LABELS['experience'][lang])}</h3>{''.join(jobs)}
+<h3 class="sec">{e(LABELS['education'][lang])}</h3>{''.join(edu)}
+<h3 class="sec">{e(SKILLS_LABEL[lang])}</h3><div class="skills-plain">{skills_plain}</div>
+<h3 class="sec">{e(LABELS['languages'][lang])}</h3><div class="skills-plain">{e(lang_plain)}</div>
+</main></div></body></html>
+"""
 
     return f"""<!DOCTYPE html>
 <html lang="{lang}" dir="{direction}">
