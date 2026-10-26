@@ -110,6 +110,22 @@ class RenderAndPacket(unittest.TestCase):
         self.assertIn('class="skills-list"', html)
         self.assertNotIn('<span class="chip">', html)
 
+    def test_minimal_theme_two_columns_and_fonts(self):
+        html = render.render_html(profile(), tailoring(design={"theme": "minimal", "stats": ["st-years"]}))
+        self.assertIn("@font-face{font-family:'Libre Bodoni'", html)
+        self.assertIn('class="cols"', html)
+        self.assertIn("Jan 2023 – Present", html)
+        self.assertIn('<div class="n">4</div>', html)
+        self.assertLess(html.index('class="right"'), html.index('class="left"'))
+        self.assertNotIn("<script", html)
+
+    def test_minimal_theme_single_and_hebrew(self):
+        html = render.render_html(profile(), tailoring(lang="he", summary={}, layout="single", design={"theme": "minimal"}))
+        self.assertIn('dir="rtl"', html)
+        self.assertIn('class="page single"', html)
+        self.assertNotIn('class="cols"', html)
+        self.assertIn("01.2023", html)
+
     def test_dates_and_present(self):
         html = render.render_html(profile(), tailoring())
         self.assertIn("01.2023 – Present", html)

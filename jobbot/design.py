@@ -18,7 +18,8 @@ DENSITY = {
                "h3.sec{margin-top:15px}.main{padding-top:24px}.side{padding-top:22px}",
 }
 SKILL_STYLES = ("chips", "list")
-DEFAULTS = {"stats": [], "emphasis": [], "palette": "blue", "density": "normal", "skills_style": "chips", "fact_pills": True}
+THEMES = ("classic", "minimal")
+DEFAULTS = {"theme": "classic", "stats": [], "emphasis": [], "palette": "blue", "density": "normal", "skills_style": "chips", "fact_pills": True}
 
 STATS_CSS = """
 .stats{display:grid;gap:0;margin:14px 0 4px;border:1px solid var(--line);border-radius:8px;overflow:hidden}
@@ -46,6 +47,8 @@ def problems(t, stat_ids):
         if k not in DEFAULTS:
             errs.append(f"design: unknown option '{k}'")
     d = options(t)
+    if d["theme"] not in THEMES:
+        errs.append(f"design.theme must be one of {THEMES}")
     if d["palette"] not in PALETTES:
         errs.append(f"design.palette must be one of {sorted(PALETTES)}")
     if d["density"] not in DENSITY:

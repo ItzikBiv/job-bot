@@ -146,6 +146,9 @@ def _range(item, lang):
 
 
 def render_html(profile, t):
+    if design.options(t)["theme"] == "minimal":
+        from . import theme_minimal
+        return theme_minimal.render(profile, t, bidi, emphasize, SKILL_GROUPS)
     lang = t["lang"]
     direction = "rtl" if lang == "he" else "ltr"
     idx = index(profile)

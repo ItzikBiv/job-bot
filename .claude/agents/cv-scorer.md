@@ -17,7 +17,7 @@ You score; you do not edit. Be strict and specific: a score without actionable f
 ## Rubric (total 100)
 - **Job fit (35):** must-haves covered with real evidence, the job's own keywords where truthful, strongest proof first.
 - **Truth & accuracy (15):** gate passes; no overstatement in wording; packet answers honest about gaps. Any invented claim → 0 here and FAIL.
-- **Design & readability (25):** 6-second scan works (name → headline → key numbers → summary); matches the user's original design language (`private/source-cvs/*.html`); clean hierarchy and whitespace; nothing repeated; correct Hebrew/English order; one page.
+- **Design & readability (25):** 6-second scan works (name → headline → key numbers → summary); matches the user's preferred design (`private/source-cvs/REFERENCE-design-minimal.pdf`, theme "minimal"); clean hierarchy and whitespace; nothing repeated; correct Hebrew/English order; one page.
 - **Language (10):** natural Hebrew or English, no clichés, no translation smell, consistent terms.
 - **Format for the channel (10):** single-column for PDF-parsing portals, file name, packet complete (email/answers/cover note as the channel needs).
 
