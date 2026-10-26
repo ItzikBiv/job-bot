@@ -56,7 +56,7 @@ def font_css():
 
 
 CSS = """
-:root{--ink:#3d4146;--text:#4a4f55;--soft:#80868d;--line:#dcdcdc;--accent:#3d4146}
+:root{--ink:#3d4146;--text:#4a4f55;--soft:#6c7279;--line:#dcdcdc;--accent:#3d4146}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{background:#fff;color:var(--ink);-webkit-font-smoothing:antialiased}
 body{font-family:'Roboto','Heebo',Arial,sans-serif}
@@ -111,7 +111,9 @@ h2{font-weight:400;font-size:12px;letter-spacing:.2em;text-transform:uppercase;c
 [dir=ltr] .job li::before{left:0}[dir=rtl] .job li::before{right:0}
 .single .contact-line{font-size:9.6px;color:var(--text);margin-top:12px;display:flex;flex-wrap:wrap;gap:4px 16px}
 .single .contact-line span{direction:ltr;unicode-bidi:isolate}
-.single .body{padding-top:12px}
+.single .body{padding-top:14px}
+/* PDF-parsing portals read letter-spaced capitals as separate letters: keep tracking tight in single layout */
+.single .head .title,.single h2,.single .stat .l{letter-spacing:.02em}.single .sep{margin:16px 0}
 .single .skills-plain div{font-size:9.6px;line-height:1.7;color:var(--text)}
 .single .skills-plain b{color:var(--ink);font-weight:700}
 @media print{.page{margin:0}@page{size:A4;margin:0}}
