@@ -1,0 +1,16 @@
+{
+  "extraKnownMarketplaces": {
+    "workflow": {
+      "source": {
+        "source": "github",
+        "repo": "Bent40/Workflow-Marketplace"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "workflow-core@workflow": true,
+    "workflow-method@workflow": true,
+    "workflow-test-architect@workflow": true,
+    "workflow-editorial@workflow": true
+  }
+}

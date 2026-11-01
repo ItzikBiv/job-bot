@@ -1,0 +1,146 @@
+{
+  "schema": "jobbot.profile/v1",
+  "person": {
+    "name": {
+      "en": "Dana Example",
+      "he": "דנה דוגמה"
+    },
+    "email": "dana@example.com",
+    "phone": "+972 50-000-0000",
+    "city": {
+      "en": "Rehovot, Israel",
+      "he": "רחובות, ישראל"
+    },
+    "linkedin": "linkedin.com/in/example",
+    "initials": "DE"
+  },
+  "headlines": [
+    {
+      "id": "h-1",
+      "en": "EE Student (RF)",
+      "he": "סטודנטית להנדסת חשמל (RF)"
+    }
+  ],
+  "facts": [
+    {
+      "id": "f-years",
+      "en": "4 years of lab work",
+      "he": "4 שנות עבודת מעבדה"
+    },
+    {
+      "id": "f-unconfirmed",
+      "en": "30+ boards debugged",
+      "he": "30+ כרטיסים",
+      "confirm": true
+    }
+  ],
+  "skills": [
+    {
+      "id": "s-matlab",
+      "group": "software",
+      "en": "MATLAB",
+      "he": "MATLAB"
+    },
+    {
+      "id": "s-rf",
+      "group": "engineering",
+      "en": "RF measurements",
+      "he": "מדידות RF"
+    },
+    {
+      "id": "s-vna",
+      "group": "engineering",
+      "en": "VNA",
+      "he": "VNA",
+      "confirm": true
+    }
+  ],
+  "experience": [
+    {
+      "id": "x-new",
+      "title": {
+        "en": "Lab Technician",
+        "he": "טכנאית מעבדה"
+      },
+      "org": {
+        "en": "Acme RF",
+        "he": "אקמה RF"
+      },
+      "start": "2023-01",
+      "end": null,
+      "bullets": [
+        {
+          "id": "b-new-1",
+          "en": "Ran RF measurements on 12 product lines.",
+          "he": "ביצוע מדידות RF ל-12 קווי מוצר."
+        },
+        {
+          "id": "b-new-2",
+          "en": "Maintained test setups.",
+          "he": "תחזוקת עמדות בדיקה."
+        }
+      ]
+    },
+    {
+      "id": "x-old",
+      "title": {
+        "en": "Assembler",
+        "he": "מרכיבה"
+      },
+      "org": {
+        "en": "Beta Ltd",
+        "he": "בטא בע\"מ"
+      },
+      "start": "2020-01",
+      "end": "2022-12",
+      "bullets": [
+        {
+          "id": "b-old-1",
+          "en": "Assembled cable harnesses.",
+          "he": "הרכבת רתמות כבלים."
+        }
+      ]
+    }
+  ],
+  "education": [
+    {
+      "id": "e-1",
+      "title": {
+        "en": "B.Sc. EE",
+        "he": "B.Sc הנדסת חשמל"
+      },
+      "org": {
+        "en": "Example College",
+        "he": "מכללה לדוגמה"
+      },
+      "start": "2022-10",
+      "end": null,
+      "note": null
+    }
+  ],
+  "languages": [
+    {
+      "id": "l-en",
+      "en": "English",
+      "he": "אנגלית",
+      "level": {
+        "en": "Advanced",
+        "he": "רמה גבוהה"
+      }
+    }
+  ],
+  "stats": [
+    {
+      "id": "st-years",
+      "value": "4",
+      "en": "years of lab work",
+      "he": "שנות עבודת מעבדה"
+    },
+    {
+      "id": "st-lines",
+      "value": "12",
+      "en": "product lines tested",
+      "he": "קווי מוצר"
+    }
+  ]
+}

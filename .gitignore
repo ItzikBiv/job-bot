@@ -1,0 +1,6 @@
+# Personal data — never commit (D6)
+private/
+.env
+__pycache__/
+*.pyc
+.pytest_cache/

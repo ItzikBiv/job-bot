@@ -1,0 +1,6 @@
+{"jobs": [
+  {"id": 101, "title": "RF Student Engineer", "location": {"name": "Rehovot, Israel"}, "absolute_url": "https://example.com/gh/101",
+   "updated_at": "2026-10-01T10:00:00Z", "content": "&lt;p&gt;Work with &lt;b&gt;VNA&lt;/b&gt; and antennas.&lt;/p&gt;"},
+  {"id": 102, "title": "Senior Backend Engineer", "location": {"name": "Tel Aviv"}, "absolute_url": "https://example.com/gh/102",
+   "updated_at": "2026-10-01T10:00:00Z", "content": "Go, Kubernetes, RF not needed"}
+]}
