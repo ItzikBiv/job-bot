@@ -275,14 +275,24 @@ def render_pdf(html_path, pdf_path):
     pdf_path.unlink(missing_ok=True)  # never report a stale PDF from an earlier build as fresh
     if not chrome:
         return False
-    # Headless print occasionally exits cleanly without writing a file; one retry covers it.
-    for _attempt in range(2):
+    # Headless print occasionally exits without writing a file, or prints before the embedded fonts
+    # load and leaves the page blank; the virtual-time budget waits for fonts, and retries cover the rest.
+    for _attempt in range(3):
         with tempfile.TemporaryDirectory() as profile_dir:
             subprocess.run(
                 [chrome, "--headless", "--no-sandbox", "--disable-gpu", f"--user-data-dir={profile_dir}",
-                 "--no-pdf-header-footer", f"--print-to-pdf={pdf_path}", Path(html_path).resolve().as_uri()],
+                 "--no-pdf-header-footer", "--run-all-compositor-stages-before-draw", "--virtual-time-budget=10000",
+                 f"--print-to-pdf={pdf_path}", Path(html_path).resolve().as_uri()],
                 check=True, capture_output=True, timeout=120,
             )
-        if pdf_path.exists() and pdf_path.stat().st_size > 0:
+        if pdf_path.exists() and pdf_path.stat().st_size > 0 and _has_text(pdf_path):
             return True
-    return pdf_path.exists() and pdf_path.stat().st_size > 0
+    return pdf_path.exists() and pdf_path.stat().st_size > 0 and _has_text(pdf_path)
+
+
+def _has_text(pdf_path):
+    """A PDF printed before its fonts loaded has no text layer. Without pdftotext, trust the file."""
+    if not shutil.which("pdftotext"):
+        return True
+    out = subprocess.run(["pdftotext", str(pdf_path), "-"], capture_output=True, text=True).stdout
+    return len(out.split()) > 20
